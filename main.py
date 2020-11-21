@@ -1,23 +1,26 @@
 import os
-import requests, zipfile, io
+import zip
+import tar_gz
 
 url = "https://www.meso-star.com/projects/solstice/downloads/Solstice-0.9.0-Win64.zip"
 folder = "solstice"
-
-
-def download_extract(url, folder):
-    """ Downloads and extracts zip file to specified folder"""
-    r = requests.get(url)
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    z.extractall(folder)
 
 
 def mkdir_if_not_exists(dirname):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+
+def check_extension_and_call(url, folder):
+    if url.split(".")[-1] == "zip":
+        zip.download_extract(url, folder)
+    elif url.split(".")[-1] == "gz":
+        tar_gz.download_extract(url, folder)
+    print("Not .zip or .gz file extension")
+
+
 mkdir_if_not_exists(folder)
 if len(os.listdir(folder)) == 0:
-    download_extract(url, folder)
+    check_extension_and_call()
 else:
-    print(f"{folder} directory not empty")
+    print(f"{folder} directory not empty...aborting")
